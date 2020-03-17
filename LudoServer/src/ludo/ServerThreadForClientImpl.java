@@ -38,6 +38,7 @@ public class ServerThreadForClientImpl extends Thread implements ServerThreadFor
 	public void throwDice() throws IOException {
 		int numberOnDice = (int)(Math.random()*6 + 1);
 		dataOut.writeInt(numberOnDice);
+//		System.out.println(numberOnDice);
 	}
 
 	@Override
@@ -60,10 +61,6 @@ public class ServerThreadForClientImpl extends Thread implements ServerThreadFor
 	}
 	
 	public void serverExecutes() throws IOException {
-		while(dataIn.available() == 0) {
-			
-		}
-		receivedCode = dataIn.readInt();
 		switch(receivedCode) {
 		case 10:
 			throwDice();
@@ -71,9 +68,6 @@ public class ServerThreadForClientImpl extends Thread implements ServerThreadFor
 			break;
 		case 11:
 			playerIsReady();
-			receivedCode = 0;
-			break;
-		default:
 			receivedCode = 0;
 			break;
 		}
@@ -107,9 +101,10 @@ public class ServerThreadForClientImpl extends Thread implements ServerThreadFor
 			dataIn = new DataInputStream(socket.getInputStream());
 			textIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			textOut = new PrintStream(socket.getOutputStream());
-			
+			System.out.println(dataIn.readInt());
 			serverExecutes();
-			
+			throwDice();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
