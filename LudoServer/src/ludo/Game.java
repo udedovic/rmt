@@ -1,14 +1,16 @@
 package ludo;
 
+import javax.management.timer.*; 
+
 public class Game {
 
 	private int numberOfPlayers;
 	private int round;
 	private int whichPlayerIsOnTurn;
 	private boolean isEnd;
+	private Timer timer;
 	
 	public Game(int numberOfPlayers, int round, int whichPlayerIsOnTurn, boolean isEnd) {
-		super();
 		this.numberOfPlayers = numberOfPlayers;
 		this.round = round;
 		this.whichPlayerIsOnTurn = whichPlayerIsOnTurn;
