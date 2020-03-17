@@ -41,7 +41,7 @@ public class ClientThread extends Thread {
 	
 	
 
-	private int sendingCode = 0; //everything OK
+	private int sendingCode = 10; //everything OK
 	private static int numberOnDice;
 	
 	public ClientThread() throws UnknownHostException, IOException {
@@ -58,11 +58,14 @@ public class ClientThread extends Thread {
 			playerIsReady();
 			sendingCode = 0;
 			break;
-			
+		default:
+			dataOut.writeInt(0);
+			break;
 		}
 	}
 	
-	private void playerIsReady() {
+	private void playerIsReady() throws IOException {
+		dataOut.writeInt(11);
 		textOut.println(nameOfPlayer);
 		textOut.println(colorOfPlayer);
 	}
@@ -70,7 +73,6 @@ public class ClientThread extends Thread {
 	private void throwDice() throws IOException {
 		dataOut.writeInt(10);
 		numberOnDice = dataIn.readInt();
-//		System.out.println(numberOnDice);
 	}
 
 	@Override
@@ -80,9 +82,10 @@ public class ClientThread extends Thread {
 			dataOut = new DataOutputStream(socket.getOutputStream());
 			textIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			textOut = new PrintStream(socket.getOutputStream());
-			dataOut.writeInt(69);
+			System.out.println("proba");
 			clientExecutes();
-			throwDice();
+			System.out.println(numberOnDice);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
