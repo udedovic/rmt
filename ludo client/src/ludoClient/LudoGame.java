@@ -85,7 +85,6 @@ public class LudoGame extends JFrame {
 	 * Create the frame.
 	 */
 	public LudoGame() {
-		setEnabled(false);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LudoGame.class.getResource("/Resource/ludo1.png")));
 		setTitle("Ludo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
