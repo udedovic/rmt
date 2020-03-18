@@ -3,7 +3,7 @@ package ludo;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server {
+public class Server extends Thread {
 
 	private static Game game;
 	
@@ -26,9 +26,9 @@ public class Server {
 				Socket socket = serverSocket.accept();
 				ServerThreadForClientImpl thread = new ServerThreadForClientImpl(socket);
 				thread.start();
-				if(game == null)
-					game = new Game(1, 1, 1, false);
-				else game.setNumberOfPlayers(game.getNumberOfPlayers() + 1);
+//				if(game == null)
+//					game = new Game(1, 1, 1, false);
+//				else game.setNumberOfPlayers(game.getNumberOfPlayers() + 1);
 			}
 		}catch(Exception e){
 			

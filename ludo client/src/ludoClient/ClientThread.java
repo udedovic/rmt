@@ -42,6 +42,7 @@ public class ClientThread extends Thread {
 	
 
 	private int sendingCode = 10; //everything OK
+	private int recivedCode = 1; // everything OK
 	private static int numberOnDice;
 	
 	public ClientThread() throws UnknownHostException, IOException {
@@ -49,30 +50,45 @@ public class ClientThread extends Thread {
 	}
 
 	public void clientExecutes() throws IOException {
+		
 		switch(sendingCode) {
-		case 10:
-			throwDice();
-			sendingCode = 0;
+		case 0:
+			dataOut.writeInt(sendingCode);
 			break;
-		case 11:
+		case Command.THROW_DICE:
+			throwDice();
+			break;
+		case Command.PLAYER_IS_READY:
 			playerIsReady();
-			sendingCode = 0;
 			break;
 		default:
-			dataOut.writeInt(0);
+			sendingCode = 0;
+			dataOut.writeInt(sendingCode);
 			break;
 		}
 	}
 	
 	private void playerIsReady() throws IOException {
-		dataOut.writeInt(11);
+		dataOut.writeInt(Command.PLAYER_IS_READY);
 		textOut.println(nameOfPlayer);
 		textOut.println(colorOfPlayer);
+		endOfCommand();
 	}
 
 	private void throwDice() throws IOException {
-		dataOut.writeInt(10);
-		numberOnDice = dataIn.readInt();
+		dataOut.writeInt(Command.THROW_DICE);
+		
+		while(dataIn.available() == 0) {}
+
+		numberOnDice = dataIn.readInt(); // ovo ne treba klijentu
+		endOfCommand();
+	}
+	
+	public void endOfCommand() throws IOException {
+		while(dataIn.available() == 0) {
+		}
+		recivedCode = dataIn.readInt();
+		sendingCode = 0;
 	}
 
 	@Override
@@ -82,6 +98,7 @@ public class ClientThread extends Thread {
 			dataOut = new DataOutputStream(socket.getOutputStream());
 			textIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			textOut = new PrintStream(socket.getOutputStream());
+			
 			System.out.println("proba");
 			clientExecutes();
 			System.out.println(numberOnDice);

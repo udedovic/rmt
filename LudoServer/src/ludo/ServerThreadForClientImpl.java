@@ -29,6 +29,7 @@ public class ServerThreadForClientImpl extends Thread implements ServerThreadFor
 	}
 
 	private int receivedCode = 0;
+	private int sendingCode = 1; // 1 OK 
 	
 	public ServerThreadForClientImpl(Socket socket) {
 		this.socket = socket;
@@ -38,6 +39,8 @@ public class ServerThreadForClientImpl extends Thread implements ServerThreadFor
 	public void throwDice() throws IOException {
 		int numberOnDice = (int)(Math.random()*6 + 1);
 		dataOut.writeInt(numberOnDice);
+		
+		endOfComand();
 	}
 
 	@Override
@@ -64,14 +67,15 @@ public class ServerThreadForClientImpl extends Thread implements ServerThreadFor
 			
 		}
 		receivedCode = dataIn.readInt();
+		
 		switch(receivedCode) {
-		case 10:
+		case 0:
+			return;
+		case Command.THROW_DICE:
 			throwDice();
-			receivedCode = 0;
 			break;
-		case 11:
+		case Command.PLAYER_IS_READY:
 			playerIsReady();
-			receivedCode = 0;
 			break;
 		default:
 			receivedCode = 0;
@@ -98,6 +102,13 @@ public class ServerThreadForClientImpl extends Thread implements ServerThreadFor
 		if(player.getPlayerId() == 1) {
 			player.setOnTurn(true);
 		}
+		
+		endOfComand();
+	}
+	
+	public void endOfComand() throws IOException {
+		dataOut.writeInt(sendingCode);
+		receivedCode = 0;
 	}
 
 	@Override
