@@ -7,6 +7,7 @@ public class Client {
 		try {
 			ClientThread clientThread = new ClientThread();
 			clientThread.start();
+			//proba
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
