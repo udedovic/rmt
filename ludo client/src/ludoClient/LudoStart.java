@@ -13,6 +13,8 @@ import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class LudoStart extends JFrame {
 
@@ -27,7 +29,7 @@ public class LudoStart extends JFrame {
 	private JLabel lblGO;
 	private JLabel lblWelcome;
 	private JLabel lblServerNameFild;
-	private JTextField textRoom;
+	public static JTextField textRoom;
 
 	/**
 	 * Launch the application.
@@ -128,6 +130,19 @@ public class LudoStart extends JFrame {
 	private JLabel getLblGO() {
 		if (lblGO == null) {
 			lblGO = new JLabel("");
+			lblGO.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					
+					
+					ClientThread.setAddress("localhost"); // izmeni posle
+
+					ClientThread.setSendingCode(Command.GO_START);
+
+					Client.setStartClientThread(true);
+					
+				}
+			});
 			lblGO.setIcon(new ImageIcon(LudoStart.class.getResource("/Resource/FirstPage/GOButtonF (2).png")));
 			lblGO.setBounds(198, 381, 110, 115);
 		}
@@ -150,7 +165,7 @@ public class LudoStart extends JFrame {
 		}
 		return lblServerNameFild;
 	}
-	private JTextField getTextRoom() {
+	public static JTextField getTextRoom() {
 		if (textRoom == null) {
 			textRoom = new JTextField();
 			textRoom.setBackground(new Color(255, 255, 204));

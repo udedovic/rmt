@@ -9,7 +9,10 @@ import java.io.PrintStream;
 import java.net.Socket;
 
 public class ServerThreadForClientImpl extends Thread implements ServerThreadForClient{
-
+	
+	private final int YES_OK = 1;
+	private final int NO_ERROR = 0;
+	
 	private Socket socket;
 	private DataOutputStream dataOut;
 	private DataInputStream dataIn;
@@ -63,13 +66,15 @@ public class ServerThreadForClientImpl extends Thread implements ServerThreadFor
 	}
 	
 	public void serverExecutes() throws IOException {
-		while(dataIn.available() == 0) {
-			
-		}
+		while(dataIn.available() == 0) {}
+		
 		receivedCode = dataIn.readInt();
 		
 		switch(receivedCode) {
 		case 0:
+			/*
+			 * 	ovde apdejtujemo podatke
+			 */
 			return;
 		case Command.THROW_DICE:
 			throwDice();
@@ -77,12 +82,42 @@ public class ServerThreadForClientImpl extends Thread implements ServerThreadFor
 		case Command.PLAYER_IS_READY:
 			playerIsReady();
 			break;
+		case Command.GO_START:
+			goStart();
+			break;
 		default:
 			receivedCode = 0;
 			break;
 		}
 	}
 
+
+	private void goStart() throws IOException {
+		
+		while(dataIn.available() == 0) {}
+		int clientRoom = dataIn.readInt();
+		
+		if(checkRoom(clientRoom) == YES_OK) {
+			dataOut.writeInt(YES_OK);
+		} else {
+			dataOut.writeInt(NO_ERROR);
+		}
+		endOfComand();
+	}
+
+	private int checkRoom(int clientRoom) {
+		
+		for(Room room: Room.rooms) {
+			if(room.getRoomID() == clientRoom) {
+				
+				if(room.getNumberOfPlayers()<4) {
+					return YES_OK; // pusti ga u sobu
+				}
+				return NO_ERROR;
+			}
+		}
+		return NO_ERROR;
+	}
 
 	private void playerIsReady() throws IOException {
 		String name = textIn.readLine();
